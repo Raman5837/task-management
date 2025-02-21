@@ -11,7 +11,6 @@ require (
 	github.com/puzpuzpuz/xsync/v3 v3.5.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
-	github.com/uptrace/bun/dialect/sqlitedialect v1.2.10 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	golang.org/x/exp v0.0.0-20250215185904-eff6e970281f // indirect
@@ -33,6 +32,7 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/rs/zerolog v1.33.0
 	github.com/uptrace/bun v1.2.10
+	github.com/uptrace/bun/dialect/sqlitedialect v1.2.10
 	github.com/uptrace/bun/driver/sqliteshim v1.2.10
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect

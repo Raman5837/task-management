@@ -6,6 +6,7 @@ import (
 	"github.com/Raman5837/task-management/base/configuration"
 	"github.com/Raman5837/task-management/base/constants"
 	"github.com/Raman5837/task-management/base/settings"
+	"github.com/Raman5837/task-management/routes"
 )
 
 // EntryPoint of the app
@@ -16,6 +17,9 @@ func main() {
 
 	// Creating a new logger instance
 	Logger := configuration.GetLogger()
+
+	// Registering all the routes
+	routes.RegisterAll(app)
 
 	// Graceful Shutdown
 	shutdown := make(chan os.Signal, 1)
