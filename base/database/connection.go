@@ -23,7 +23,7 @@ func EstablishConnection() error {
 	config := SQLiteConfig{
 		MaxOpenConnection: 25,
 		MaxIdleConnection: 10,
-		DBPath:            "local.db",
+		DBPath:            "storage.db",
 		Timeout:           5 * time.Second,
 	}
 	connection, err := sql.Open("sqlite", config.DBPath)
@@ -48,6 +48,10 @@ func EstablishConnection() error {
 	}
 
 	Logger.Info("SQLite connection established successfully")
+
+	if err := Migrate(); err != nil {
+		Logger.Fatal(err, "Something went wrong while migrating tables")
+	}
 
 	return nil
 

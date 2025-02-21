@@ -11,13 +11,13 @@ type APIResponse struct {
 	Message string      `json:"message,omitempty"` // error message for error responses
 }
 
-func SendSuccessResponse(context *fiber.Ctx, message string, data interface{}) error {
+func SendSuccessResponse(context *fiber.Ctx, message string, data interface{}, code int) error {
 	response := APIResponse{
 		Data:    data,
 		Message: message,
 		Status:  "success",
 	}
-	return context.JSON(response)
+	return context.Status(code).JSON(response)
 }
 
 func SendErrorResponse(context *fiber.Ctx, message string, code int) error {

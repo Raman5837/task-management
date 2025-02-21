@@ -1,0 +1,112 @@
+### Create Task
+POST http://localhost:3030/api/v1/tasks/
+Content-Type: application/json
+
+{
+    "title": "Second",
+    "status": "initiated",
+    "description": "Testing API 1"
+}
+
+### Expected Response (Example)
+# Response:
+# HTTP/1.1 201 Created
+# Content-Type: application/json
+#
+# {
+#     "status": "success",
+#     "data": {
+#         "ID": 2,
+#         "Title": "Second",
+#         "Status": "initiated",
+#         "Description": "Testing API 1"
+#     },
+#     "message": "Task created successfully"
+# }
+
+
+### Get Task
+GET http://localhost:3030/api/v1/tasks/1
+
+### Expected Response (Example)
+# Response:
+# HTTP/1.1 200 OK
+# Content-Type: application/json
+#
+# {
+#     "status": "success",
+#     "data": {
+#         "ID": 1,
+#         "Title": "First",
+#         "Status": "initiated",
+#         "Description": "Testing API"
+#     },
+#     "message": "Task retrieved successfully"
+# }
+
+
+### Update Task
+PUT http://localhost:3030/api/v1/tasks/3
+Content-Type: application/json
+
+{
+    "title": "Updated Task",
+    "status": "completed",
+    "description": "Updated description"
+}
+
+### Expected Response (Example)
+# Response:
+# HTTP/1.1 200 OK
+# Content-Type: application/json
+#
+# {
+#     "status": "success",
+#     "data": {
+#         "ID": 3,
+#         "Title": "Updated Task",
+#         "Status": "completed",
+#         "Description": "Updated description"
+#     },
+#     "message": "Task updated successfully"
+# }
+
+
+### Delete Task
+DELETE http://localhost:3030/api/v1/tasks/3
+
+### Expected Response (Example)
+# Response:
+# HTTP/1.1 200 OK
+# Content-Type: application/json
+#
+# {
+#    "status": "success",
+#    "message": "Task deleted successfully"
+# }
+
+
+### List Tasks (Paginated & Filtered)
+GET http://localhost:3030/api/v1/tasks/?status=completed
+
+### Expected Response (Example)
+# Response:
+# HTTP/1.1 200 OK
+# Content-Type: application/json
+#
+# {
+#     "count": 1,
+#     "current_page": 1,
+#     "data": [
+#         {
+#             "ID": 4,
+#             "Title": "Fourth",
+#             "Status": "completed",
+#             "Description": "Testing API 4"
+#         }
+#     ],
+#     "error": null,
+#     "next": "/api/v1/tasks/?limit=25&offset=25&status=completed",
+#     "previous": "/api/v1/tasks/?limit=25&offset=0&status=completed",
+#     "total_pages": 1
+# }
