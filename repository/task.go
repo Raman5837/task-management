@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Raman5837/task-management/base/configuration"
+	"github.com/Raman5837/task-management/base/constants"
 	"github.com/Raman5837/task-management/models"
 	"github.com/uptrace/bun"
 )
@@ -49,12 +50,12 @@ func (repo *TaskRepository) DeleteTask(context context.Context, taskID int) erro
 }
 
 // Filter Task
-func (repo *TaskRepository) FilteredTask(context context.Context, status string, limit *int, offset *int) ([]models.Task, error) {
+func (repo *TaskRepository) FilteredTask(context context.Context, status constants.TaskStatus, limit *int, offset *int) ([]models.Task, error) {
 
 	var response []models.Task
 	query := repo.DB.NewSelect().Model(&response)
 
-	if status != "" {
+	if status.IsValid() {
 		query = query.Where("status = ?", status)
 	}
 
@@ -71,11 +72,11 @@ func (repo *TaskRepository) FilteredTask(context context.Context, status string,
 }
 
 // Returns the total number of tasks (For pagination)
-func (repo *TaskRepository) GetCount(context context.Context, status string) (int, error) {
+func (repo *TaskRepository) GetCount(context context.Context, status constants.TaskStatus) (int, error) {
 
-	query := repo.DB.NewSelect().Model((*models.Task)(nil)).Where("status = ?", status)
+	query := repo.DB.NewSelect().Model((*models.Task)(nil))
 
-	if status != "" {
+	if status.IsValid() {
 		query = query.Where("status = ?", status)
 	}
 

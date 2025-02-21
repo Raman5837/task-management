@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/Raman5837/task-management/base/configuration"
+	"github.com/Raman5837/task-management/base/constants"
 	"github.com/Raman5837/task-management/base/database"
 	"github.com/Raman5837/task-management/base/middleware"
 	"github.com/Raman5837/task-management/base/utils"
@@ -21,7 +22,12 @@ func CreateTaskHandler(context *fiber.Ctx) error {
 
 	payload := types.CreateTaskRequestEntity{}
 	if err := context.BodyParser(&payload); err != nil {
-		Logger.Warn("Error while parsing request payload %v", err)
+		Logger.Warn("[CreateTaskHandler]: Error while parsing request payload %v", err)
+		return utils.SendErrorResponse(context, "Invalid payload", fiber.StatusBadRequest)
+	}
+
+	if payload.Status != "" && !payload.Status.IsValid() {
+		Logger.Warn("[CreateTaskHandler]: Invalid value for status")
 		return utils.SendErrorResponse(context, "Invalid payload", fiber.StatusBadRequest)
 	}
 
@@ -31,7 +37,7 @@ func CreateTaskHandler(context *fiber.Ctx) error {
 	response, err := service.CreateTask(payload)
 
 	if err != nil {
-		Logger.Warn("Error creating new task %v", err)
+		Logger.Warn("[CreateTaskHandler]: Error creating new task %v", err)
 		return utils.SendErrorResponse(context, "Something went wrong", fiber.StatusInternalServerError)
 	}
 
@@ -44,7 +50,7 @@ func GetTaskHandler(context *fiber.Ctx) error {
 
 	taskID, err := strconv.Atoi(context.Params("id"))
 	if err != nil {
-		Logger.Warn("Error while parsing request payload %v", err)
+		Logger.Warn("[GetTaskHandler]: Error while parsing request payload %v", err)
 		return utils.SendErrorResponse(context, "Invalid task ID", fiber.StatusBadRequest)
 	}
 
@@ -52,7 +58,7 @@ func GetTaskHandler(context *fiber.Ctx) error {
 	response, err := service.GetTask(types.GetTaskRequestEntity{Context: context.Context(), ID: taskID})
 
 	if err != nil {
-		Logger.Warn("Error while retrieving task %v", err)
+		Logger.Warn("[GetTaskHandler]: Error while retrieving task %v", err)
 		return utils.SendErrorResponse(context, "Task does not exists", fiber.StatusNotFound)
 	}
 
@@ -74,6 +80,11 @@ func UpdateTaskHandler(context *fiber.Ctx) error {
 		return utils.SendErrorResponse(context, "Invalid payload", fiber.StatusBadRequest)
 	}
 
+	if payload.Status != "" && !payload.Status.IsValid() {
+		Logger.Warn("[UpdateTaskHandler]: Invalid value for status")
+		return utils.SendErrorResponse(context, "Invalid payload", fiber.StatusBadRequest)
+	}
+
 	payload.ID = taskID
 	payload.Context = context.Context()
 
@@ -81,7 +92,7 @@ func UpdateTaskHandler(context *fiber.Ctx) error {
 	response, err := service.UpdateTask(payload)
 
 	if err != nil {
-		Logger.Warn("Error while updating task %v", err)
+		Logger.Warn("[UpdateTaskHandler]: Error while updating task %v", err)
 		return utils.SendErrorResponse(context, "Failed to update task", fiber.StatusInternalServerError)
 	}
 
@@ -94,7 +105,7 @@ func DeleteTaskHandler(context *fiber.Ctx) error {
 
 	taskID, err := strconv.Atoi(context.Params("id"))
 	if err != nil {
-		Logger.Warn("Error while parsing request payload %v", err)
+		Logger.Warn("[DeleteTaskHandler]: Error while parsing request payload %v", err)
 		return utils.SendErrorResponse(context, "Invalid task ID", fiber.StatusBadRequest)
 	}
 
@@ -103,7 +114,7 @@ func DeleteTaskHandler(context *fiber.Ctx) error {
 	err = service.DeleteTask(payload)
 
 	if err != nil {
-		Logger.Warn("Error while deleting task %v", err)
+		Logger.Warn("[DeleteTaskHandler]: Error while deleting task %v", err)
 		return utils.SendErrorResponse(context, "Failed to delete task", fiber.StatusInternalServerError)
 	}
 
@@ -114,12 +125,15 @@ func DeleteTaskHandler(context *fiber.Ctx) error {
 // Handler To List Task
 func ListTaskHandler(context *fiber.Ctx) error {
 
-	status := context.Query("status")
-	pagination := context.Locals("paginationOptions").(middleware.OffsetPaginationRequestOptions)
+	status := constants.TaskStatus(context.Query("status", ""))
+	if status != "" && !status.IsValid() {
+		return utils.SendErrorResponse(context, "Invalid payload", fiber.StatusBadRequest)
+	}
 
+	pagination := context.Locals("paginationOptions").(middleware.OffsetPaginationRequestOptions)
 	payload := types.FilterTaskRequestEntity{
-		Context: context.Context(),
 		Status:  status,
+		Context: context.Context(),
 		Limit:   &pagination.Limit,
 		Offset:  &pagination.Offset,
 	}
@@ -147,11 +161,11 @@ func ListTaskHandler(context *fiber.Ctx) error {
 	waitGroup.Wait()
 
 	if taskErr != nil {
-		Logger.Warn("Error while retrieving all tasks %v", taskErr)
+		Logger.Warn("[ListTaskHandler]: Error while retrieving all tasks %v", taskErr)
 		return utils.SendErrorResponse(context, "Failed to fetch tasks", fiber.StatusInternalServerError)
 	}
 	if countErr != nil {
-		Logger.Warn("Error while calculating count %v", countErr)
+		Logger.Warn("[ListTaskHandler]: Error while calculating count %v", countErr)
 		return utils.SendErrorResponse(context, "Failed to fetch task count", fiber.StatusInternalServerError)
 	}
 

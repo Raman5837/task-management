@@ -12,6 +12,7 @@ import (
 	_ "github.com/uptrace/bun/driver/sqliteshim"
 
 	"github.com/Raman5837/task-management/base/configuration"
+	"github.com/Raman5837/task-management/base/constants"
 )
 
 // Connect to database
@@ -23,8 +24,9 @@ func EstablishConnection() error {
 	config := SQLiteConfig{
 		MaxOpenConnection: 25,
 		MaxIdleConnection: 10,
-		DBPath:            "storage.db",
-		Timeout:           5 * time.Second,
+
+		Timeout: 5 * time.Second,
+		DBPath:  constants.GetEnv("SQLITE_FILE_PATH"),
 	}
 	connection, err := sql.Open("sqlite", config.DBPath)
 

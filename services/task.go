@@ -18,7 +18,7 @@ func NewTaskService(repo *repository.TaskRepository) *TaskService {
 // Create new Task
 func (service *TaskService) CreateTask(payload types.CreateTaskRequestEntity) (*types.TaskResponseEntity, error) {
 
-	request := &models.Task{Title: payload.Title, Status: payload.Status, Description: payload.Description}
+	request := &models.Task{Title: payload.Title, Status: string(payload.Status), Description: payload.Description}
 	instance, err := service.repo.CreateTask(payload.Context, request)
 
 	if err != nil {
@@ -60,8 +60,8 @@ func (service *TaskService) UpdateTask(payload types.UpdateTaskRequestEntity) (*
 	instance := &models.Task{
 		ID:          payload.ID,
 		Title:       payload.Title,
-		Status:      payload.Status,
 		Description: payload.Description,
+		Status:      string(payload.Status),
 	}
 
 	err := service.repo.UpdateTask(payload.Context, instance)
